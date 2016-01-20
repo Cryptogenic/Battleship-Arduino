@@ -1,7 +1,7 @@
 #include <Adafruit_GFX.h>   // Core graphics library
 #include <RGBmatrixPanel.h> // Hardware-specific library
-#include "Headers/Battleship.h"
-#include "Headers/Structures.h"
+#include "Battleship.h"
+#include "Structures.h"
 
 #define CLK 8  // MUST be on PORTB! (Use pin 11 on Mega)
 #define LAT A3
@@ -12,8 +12,6 @@
 
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
-game_s game;
-
 void setup() {
   matrix.begin();
 
@@ -23,8 +21,11 @@ void setup() {
   {
     for(int y = 0; y < 16; y++)
     {
-      if(game.gameBoard[x][y] == FLAG_GRID_WHITE)
-        matrix.drawPixel(x, y, matrix.Color333(7, 7, 7));
+      if(checkHit(0, x, y))
+        matrix.drawPixel(x, y, matrix.Color333(0, 1, 0));
+      else
+        matrix.drawPixel(x, y, matrix.Color333(0, 0, 1));
+      matrix.drawPixel(4, 11, matrix.Color333(1, 0, 0));
     }
   }
 
