@@ -6,14 +6,16 @@
 
 void initiate();
 
-void setupGame();
+void placeShip(int clientIndex, int shipLength, int placement, int x, int y);
 
-void placePlayerShips();
+bool drawGameBoard(int x, int y);
 
-void placeEnemyShips();
+bool drawWater(int x, int y);
 
-void placeShip(int clientIndex, int shipLength);
+bool drawScore(int clientIndex, int x, int y);
 
 bool checkHit(int clientIndex, int x, int y);
+
+char getFlag(int x, int y);
 
 #endif
