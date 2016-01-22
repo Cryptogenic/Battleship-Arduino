@@ -18,8 +18,16 @@ void fixShips(int clientIndex, int shipLength)
 {
   for(;;)
   {
-    if(placeShip(clientIndex, shipLength, 1, random(3, 11), random(6, 8)))
-      break;
+    if(clientIndex == 0)
+    {
+      if(placeShip(clientIndex, shipLength, 1, random(3, 11), random(6, 8)))
+        break;
+    }
+    else
+    {
+      if(placeShip(clientIndex, shipLength, 1, random(18, 30), random(6, 9)))
+        break;
+    }
   }
 }
 
@@ -38,16 +46,13 @@ void loop()
 {
   if(!gameStarted)
   {
-    if(!placeShip(0, 5, 1, random(3, 11), random(6, 8)))
-      fixShips(0, 5);
-    if(!placeShip(0, 4, 1, random(3, 11), random(6, 8)))
-      fixShips(0, 4);
-    if(!placeShip(0, 3, 1, random(3, 11), random(6, 8)))
-      fixShips(0, 3);
-    if(!placeShip(0, 3, 1, random(3, 11), random(6, 8)))
-      fixShips(0, 3);
-    if(!placeShip(0, 2, 1, random(3, 11), random(6, 8)))
-      fixShips(0, 2);
+    for(int ship = 5; ship > 1; ship--)
+    {
+      if(placeShip(0, ship, random(1, 100), random(5, 11), random(6, 9)))
+        fixShips(0, ship);
+      if(placeShip(1, ship, random(1, 100), random(18, 30), random(6, 9)))
+        fixShips(1, ship);
+    }
 
     gameStarted = true;
   }

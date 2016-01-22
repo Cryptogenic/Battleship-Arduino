@@ -66,11 +66,56 @@ bool placeShip(int clientIndex, int shipLength, int placement, int x, int y)
         return false;
     }
   }
+  else
+  {
+    if(!(x < (9 - shipLength)))
+    {
+      for(int i = 0; i < shipLength; i++)
+      {
+        if(getFlag(x + i, y) == 'a')
+        {
+          placeOK = false;
+          break;
+        }
+        else
+          placeOK = true;
+      }
+
+      if(placeOK)
+      {
+        for(int i = 0; i < shipLength; i++)
+          playingField[x + i][y] = 'a';
+      }
+      else
+        return false;
+    }
+    else
+    {
+      for(int i = 0; i < shipLength; i++)
+      {
+        if(getFlag(x - i, y) == 'a')
+        {
+          placeOK = false;
+          break;
+        }
+        else
+          placeOK = true;
+      }
+
+      if(placeOK)
+      {
+        for(int i = 0; i < shipLength; i++)
+          playingField[x - i][y] = 'a';
+      }
+      else
+        return false;
+    }
+  }
 }
 
 bool drawGameBoard(int x, int y)
 {
-  if((x > 0 && x < 13) || (x > 18 && x < 31) || (x == 15 || x == 16))
+  if((x > 0 && x < 14) || (x > 17 && x < 31) || (x == 15 || x == 16))
   {
     if(x == 15 || x == 16)
       return true;
@@ -91,7 +136,7 @@ bool drawGameBoard(int x, int y)
 
 bool drawWater(int x, int y)
 {
-  if((x > 1 && x < 12) || (x > 19 && x < 30))
+  if((x > 1 && x < 13) || (x > 18 && x < 30))
     if(y > 1 && y < 12)
       return true;
 
