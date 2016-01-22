@@ -10,7 +10,7 @@ void initiate()
   client[1].score = 0;
 }
 
-void placeShip(int clientIndex, int shipLength, int placement, int x, int y)
+bool placeShip(int clientIndex, int shipLength, int placement, int x, int y)
 {
   /* Randomize whether we want the ship placed vertically or horizontally, we
      will do this by generating a random number and placing the ship vertical if
@@ -19,21 +19,51 @@ void placeShip(int clientIndex, int shipLength, int placement, int x, int y)
 
   /* If odd, place ship vertically, if even, place ship horizontally */
 
+  bool placeOK;
+
   if(placement & 1)
   {
     if(!(y < (12 - shipLength)))
     {
       for(int i = 0; i < shipLength; i++)
       {
-        playingField[x][y + i] = 'a';
+        if(getFlag(x, y + i) == 'a')
+        {
+          placeOK = false;
+          break;
+        }
+        else
+          placeOK = true;
       }
+
+      if(placeOK)
+      {
+        for(int i = 0; i < shipLength; i++)
+          playingField[x][y + i] = 'a';
+      }
+      else
+        return false;
     }
     else
     {
       for(int i = 0; i < shipLength; i++)
       {
-        playingField[x][y - i] = 'a';
+        if(getFlag(x, y - i) == 'a')
+        {
+          placeOK = false;
+          break;
+        }
+        else
+          placeOK = true;
       }
+
+      if(placeOK)
+      {
+        for(int i = 0; i < shipLength; i++)
+          playingField[x][y - i] = 'a';
+      }
+      else
+        return false;
     }
   }
 }

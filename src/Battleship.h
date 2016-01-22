@@ -6,7 +6,7 @@
 
 void initiate();
 
-void placeShip(int clientIndex, int shipLength, int placement, int x, int y);
+bool placeShip(int clientIndex, int shipLength, int placement, int x, int y);
 
 bool drawGameBoard(int x, int y);
 

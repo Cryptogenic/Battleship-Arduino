@@ -14,11 +14,20 @@ bool gameStarted;
 
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
+void fixShips(int clientIndex, int shipLength)
+{
+  for(;;)
+  {
+    if(placeShip(clientIndex, shipLength, 1, random(3, 11), random(6, 8)))
+      break;
+  }
+}
+
 void setup()
 {
   matrix.begin();
 
-  randomSeed(analogRead(A0));
+  randomSeed(analogRead(A5));
 
   initiate();
 
@@ -29,11 +38,16 @@ void loop()
 {
   if(!gameStarted)
   {
-    placeShip(0, 5, 1, random(2, 12), random(2, 12));
-    placeShip(0, 4, 1, random(2, 12), random(2, 12));
-    placeShip(0, 3, 1, random(2, 12), random(2, 12));
-    placeShip(0, 3, 1, random(2, 12), random(2, 12));
-    placeShip(0, 2, 1, random(2, 12), random(2, 12));
+    if(!placeShip(0, 5, 1, random(3, 11), random(6, 8)))
+      fixShips(0, 5);
+    if(!placeShip(0, 4, 1, random(3, 11), random(6, 8)))
+      fixShips(0, 4);
+    if(!placeShip(0, 3, 1, random(3, 11), random(6, 8)))
+      fixShips(0, 3);
+    if(!placeShip(0, 3, 1, random(3, 11), random(6, 8)))
+      fixShips(0, 3);
+    if(!placeShip(0, 2, 1, random(3, 11), random(6, 8)))
+      fixShips(0, 2);
 
     gameStarted = true;
   }
