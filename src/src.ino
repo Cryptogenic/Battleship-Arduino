@@ -10,6 +10,12 @@
 #define B   A1
 #define C   A2
 
+const int fireButtonPin = 1;
+const int leftButtonPin = 10;
+const int rightButtonPin = 11;
+const int upButtonPin = 12;
+const int downButtonPin = 13;
+
 bool gameStarted;
 
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
@@ -35,6 +41,12 @@ void setup()
 {
   matrix.begin();
 
+  pinMode(fireButtonPin, OUTPUT);
+  pinMode(leftButtonPin, OUTPUT);
+  pinMode(rightButtonPin, OUTPUT);
+  pinMode(upButtonPin, OUTPUT);
+  pinMode(downButtonPin, OUTPUT);
+
   randomSeed(analogRead(A5));
 
   initiate();
@@ -44,17 +56,68 @@ void setup()
 
 void loop()
 {
+  delay(75);
+  
   if(!gameStarted)
   {
-    for(int ship = 5; ship > 1; ship--)
-    {
-      if(placeShip(0, ship, random(1, 100), random(5, 11), random(6, 9)))
-        fixShips(0, ship);
-      if(placeShip(1, ship, random(1, 100), random(18, 30), random(6, 9)))
-        fixShips(1, ship);
-    }
+    if(!placeShip(0, 5, random(1, 100), random(5, 11), random(6, 9)))
+      fixShips(0, 5);
+    if(!placeShip(0, 4, random(1, 100), random(5, 11), random(6, 9)))
+      fixShips(0, 4);
+    if(!placeShip(0, 3, random(1, 100), random(5, 11), random(6, 9)))
+      fixShips(0, 3);
+    if(!placeShip(0, 3, random(1, 100), random(5, 11), random(6, 9)))
+      fixShips(0, 3);
+    if(!placeShip(0, 2, random(1, 100), random(5, 11), random(6, 9)))
+      fixShips(0, 2);
 
+    if(!placeShip(1, 5, random(1, 100), random(22, 28), random(6, 9)))
+      fixShips(1, 5);
+    if(!placeShip(1, 4, random(1, 100), random(22, 28), random(6, 9)))
+      fixShips(1, 4);
+    if(!placeShip(1, 3, random(1, 100), random(22, 28), random(6, 9)))
+      fixShips(1, 3);
+    if(!placeShip(1, 3, random(1, 100), random(22, 28), random(6, 9)))
+      fixShips(1, 3);
+    if(!placeShip(1, 2, random(1, 100), random(22, 28), random(6, 9)))
+      fixShips(1, 2);
+ 
     gameStarted = true;
+  }
+  else
+  {
+    if(checkButtonPushed(digitalRead(fireButtonPin), millis()))
+    {
+      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
+    }
+    if(!checkButtonPushed(digitalRead(fireButtonPin), millis()))
+    {
+      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
+    }
+    if(checkButtonPushed(digitalRead(leftButtonPin), millis()))
+    {
+      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
+    }
+    if(!checkButtonPushed(digitalRead(leftButtonPin), millis()))
+    {
+      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
+    }
+    if(checkButtonPushed(digitalRead(rightButtonPin), millis()))
+    {
+      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
+    }
+    if(!checkButtonPushed(digitalRead(rightButtonPin), millis()))
+    {
+      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
+    }
+    if(checkButtonPushed(digitalRead(upButtonPin), millis()))
+    {
+      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
+    }
+    if(!checkButtonPushed(digitalRead(upButtonPin), millis()))
+    {
+      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
+    }
   }
   
   for(int x = 0; x < 32; x++)
@@ -73,8 +136,4 @@ void loop()
         matrix.drawPixel(x, y, matrix.Color333(0, 1, 0));
     }
   }
-
-  matrix.drawPixel(random(2, 12), random(2, 12), matrix.Color333(1, 0, 0));
-
-  delay(2000);
 }

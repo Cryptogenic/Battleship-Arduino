@@ -16,6 +16,8 @@ bool drawScore(int clientIndex, int x, int y);
 
 bool checkHit(int clientIndex, int x, int y);
 
+bool checkButtonPushed(int state, int currentClock);
+
 char getFlag(int x, int y);
 
 #endif

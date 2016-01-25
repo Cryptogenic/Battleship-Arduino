@@ -4,6 +4,8 @@ player_s client[2];
 
 char playingField[32][16];
 
+unsigned long fireButtonClock = 0;
+
 void initiate()
 {
   client[0].score = 0;
@@ -160,6 +162,19 @@ bool checkHit(int clientIndex, int x, int y)
 {
  if(playingField[x][y] == 'a')
   return true; 
+}
+
+bool checkButtonPushed(int state, int currentClock)
+{
+  if(state && (currentClock > (fireButtonClock + 300)))
+  {
+    fireButtonClock = currentClock;
+    return true;
+  }
+  else
+  {
+    return false;
+  }
 }
 
 char getFlag(int x, int y)
