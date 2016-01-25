@@ -16,6 +16,16 @@ const int rightButtonPin = 11;
 const int upButtonPin = 12;
 const int downButtonPin = 13;
 
+int clearX = 19;
+int clearY = 11;
+
+int prevX = 19;
+int prevY = 11;
+
+int enemyX = 2;
+int enemyY = 11;
+
+bool fireShot;
 bool gameStarted;
 
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
@@ -50,6 +60,22 @@ void setup()
   randomSeed(analogRead(A5));
 
   initiate();
+  
+  /* Draw the entire screen according to functions in Battleship.cpp */
+  for(int x = 0; x < 32; x++)
+  {
+    for(int y = 0; y < 16; y++)
+    {
+      if(drawGameBoard(x, y))
+        matrix.drawPixel(x, y, matrix.Color333(1, 1, 1));
+      if(drawScore(0, x, y))
+        matrix.drawPixel(x, y, matrix.Color333(0, 1, 0));
+      if(drawScore(1, x, y))
+        matrix.drawPixel(x, y, matrix.Color333(1, 0, 0));
+      if(drawWater(x, y))
+        matrix.drawPixel(x, y, matrix.Color333(0, 0, 1));
+    }
+  }
 
   delay(500);
 }
@@ -71,69 +97,90 @@ void loop()
     if(!placeShip(0, 2, random(1, 100), random(5, 11), random(6, 9)))
       fixShips(0, 2);
 
-    if(!placeShip(1, 5, random(1, 100), random(22, 28), random(6, 9)))
+    if(!placeShip(1, 5, random(1, 100), random(23, 28), random(6, 9)))
       fixShips(1, 5);
-    if(!placeShip(1, 4, random(1, 100), random(22, 28), random(6, 9)))
+    if(!placeShip(1, 4, random(1, 100), random(23, 28), random(6, 9)))
       fixShips(1, 4);
-    if(!placeShip(1, 3, random(1, 100), random(22, 28), random(6, 9)))
+    if(!placeShip(1, 3, random(1, 100), random(23, 28), random(6, 9)))
       fixShips(1, 3);
-    if(!placeShip(1, 3, random(1, 100), random(22, 28), random(6, 9)))
+    if(!placeShip(1, 3, random(1, 100), random(23, 28), random(6, 9)))
       fixShips(1, 3);
-    if(!placeShip(1, 2, random(1, 100), random(22, 28), random(6, 9)))
+    if(!placeShip(1, 2, random(1, 100), random(23, 28), random(6, 9)))
       fixShips(1, 2);
  
     gameStarted = true;
   }
   else
-  {
-    if(checkButtonPushed(digitalRead(fireButtonPin), millis()))
+  { 
+    if(getGameTurn() == 0)
     {
-      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
+      if(checkButtonPushed(digitalRead(fireButtonPin), millis()))
+      {
+        fireShot = true;
+        setGameTurn(1);
+      }
+      if(checkButtonPushed(digitalRead(leftButtonPin), millis()))
+      {
+        if((prevX - 1) > 17)
+        {
+          prevX -= 1;
+        }
+      }
+      if(checkButtonPushed(digitalRead(rightButtonPin), millis()))
+      {
+        if((prevX + 1) < 30)
+        {
+          prevX += 1;
+        }
+      }
+      if(checkButtonPushed(digitalRead(upButtonPin), millis()))
+      {
+        if((prevY - 1) > 2)
+        {
+          prevY -= 1;
+        }
+      }
     }
-    if(!checkButtonPushed(digitalRead(fireButtonPin), millis()))
+    else
     {
-      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
-    }
-    if(checkButtonPushed(digitalRead(leftButtonPin), millis()))
-    {
-      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
-    }
-    if(!checkButtonPushed(digitalRead(leftButtonPin), millis()))
-    {
-      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
-    }
-    if(checkButtonPushed(digitalRead(rightButtonPin), millis()))
-    {
-      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
-    }
-    if(!checkButtonPushed(digitalRead(rightButtonPin), millis()))
-    {
-      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
-    }
-    if(checkButtonPushed(digitalRead(upButtonPin), millis()))
-    {
-      matrix.drawPixel(0, random(2, 12), matrix.Color333(1, 0, 0));
-    }
-    if(!checkButtonPushed(digitalRead(upButtonPin), millis()))
-    {
-      matrix.drawPixel(0, 0, matrix.Color333(0, 0, 0));
+      enemyX = random(2, 12);
+      enemyY = random(2, 12);
+
+      setGameTurn(0);
     }
   }
-  
+
+  /* Draw the entire screen according to functions in Battleship.cpp */
   for(int x = 0; x < 32; x++)
   {
     for(int y = 0; y < 16; y++)
     {
-      if(drawGameBoard(x, y))
-        matrix.drawPixel(x, y, matrix.Color333(1, 1, 1));
-      if(drawScore(0, x, y))
-        matrix.drawPixel(x, y, matrix.Color333(0, 1, 0));
-      if(drawScore(1, x, y))
-        matrix.drawPixel(x, y, matrix.Color333(1, 0, 0));
-      if(drawWater(x, y))
-        matrix.drawPixel(x, y, matrix.Color333(0, 0, 1));
+      if(getGameTurn() == 0)
+      {
+        if(fireShot)
+        {
+          setFlag(prevX, prevY, 'm');
+
+          fireShot = false;
+        }
+        else
+        {
+          matrix.drawPixel(clearX, clearY, matrix.Color333(0, 0, 1));
+          matrix.drawPixel(prevX, prevY, matrix.Color333(1, 1, 0));
+
+          clearX = prevX;
+          clearY = prevY;
+        }
+      }
+      else
+      {
+        matrix.drawPixel(enemyX, enemyY, matrix.Color333(2, 1, 0));
+      }
+
       if(getFlag(x, y) == 'a')
         matrix.drawPixel(x, y, matrix.Color333(0, 1, 0));
+      if(getFlag(x, y) == 'm')
+        matrix.drawPixel(x, y, matrix.Color333(2, 1, 0));
     }
   }
 }

@@ -4,12 +4,19 @@ player_s client[2];
 
 char playingField[32][16];
 
+int gameTurn;
+
 unsigned long fireButtonClock = 0;
 
 void initiate()
 {
   client[0].score = 0;
   client[1].score = 0;
+}
+
+int getGameTurn()
+{
+  return gameTurn;
 }
 
 bool placeShip(int clientIndex, int shipLength, int placement, int x, int y)
@@ -113,6 +120,16 @@ bool placeShip(int clientIndex, int shipLength, int placement, int x, int y)
         return false;
     }
   }
+}
+
+void setGameTurn(int clientIndex)
+{
+  gameTurn = clientIndex;
+}
+
+void setFlag(int x, int y, char flag)
+{
+  playingField[x][y] = flag;
 }
 
 bool drawGameBoard(int x, int y)
