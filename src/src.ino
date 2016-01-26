@@ -10,17 +10,25 @@
 #define B   A1
 #define C   A2
 
+/* Stores the digital pin numbers used on the arduino for player interfacing */
+
 const int fireButtonPin = 1;
 const int leftButtonPin = 10;
 const int rightButtonPin = 11;
 const int upButtonPin = 12;
 const int downButtonPin = 13;
 
+/* Holds the (X, Y) co-ordinate to be cleared for the cursor */
+
 int clearX = 19;
 int clearY = 11;
 
+/* Holds the (X, Y) co-ordinate to draw for the cursor */
+
 int prevX = 19;
 int prevY = 11;
+
+/* Holds the (X, Y) co-ordinate for the enemy shot to draw */
 
 int enemyX = 2;
 int enemyY = 11;
@@ -30,6 +38,15 @@ bool gameStarted;
 
 RGBmatrixPanel matrix(A, B, C, CLK, LAT, OE, false);
 
+/*
+   Function: fixShips
+   Calls ship placement in an infinite loop until we get a correct placement
+   Parameters:
+      clientIndex  - The client number (0 for end-user, 1 for cpu)
+      shipLength   - Holds the ships length in pixels
+   See Also:
+      placeShip(int clientIndex, int shipLength, int placement, int x, int y); [Battleship.cpp]
+*/
 void fixShips(int clientIndex, int shipLength)
 {
   for(;;)
@@ -47,9 +64,13 @@ void fixShips(int clientIndex, int shipLength)
   }
 }
 
+/*
+   Function: setup
+   Sets up pin modes, generates a random seed, and initializes the game
+*/
 void setup()
 {
-  matrix.begin();
+  matrix.begin(); // initiates required library for outputting to matrix
 
   pinMode(fireButtonPin, OUTPUT);
   pinMode(leftButtonPin, OUTPUT);
@@ -57,7 +78,7 @@ void setup()
   pinMode(upButtonPin, OUTPUT);
   pinMode(downButtonPin, OUTPUT);
 
-  randomSeed(analogRead(A5));
+  randomSeed(analogRead(A5)); // A5 is not connected and will therefore generate random noise
 
   initiate();
   
@@ -80,10 +101,17 @@ void setup()
   delay(500);
 }
 
+/*
+   Function: loop
+   Places ships and listens for button presses and acts accordingly
+   See Also:
+      placeShip(int clientIndex, int shipLength, int placement, int x, int y); [Battleship.cpp]
+      checkButtonPushed(int state, int currentClock); [Battleship.cpp]
+*/
 void loop()
 {
-  delay(75);
-  
+  delay(75); // Save the CPU some stress
+
   if(!gameStarted)
   {
     if(!placeShip(0, 5, random(1, 100), random(5, 11), random(6, 9)))
@@ -111,13 +139,14 @@ void loop()
     gameStarted = true;
   }
   else
-  { 
+  {
+    /* If it is the player's turn, check for button presses and proceed */
     if(getGameTurn() == 0)
     {
       if(checkButtonPushed(digitalRead(fireButtonPin), millis()))
       {
         fireShot = true;
-        setGameTurn(1);
+        setGameTurn(1); // Set to CPU's turn
       }
       if(checkButtonPushed(digitalRead(leftButtonPin), millis()))
       {
@@ -143,10 +172,11 @@ void loop()
     }
     else
     {
+      /* Pick a random co-ordinate on the player's grid and fire */
       enemyX = random(2, 12);
       enemyY = random(2, 12);
 
-      setGameTurn(0);
+      setGameTurn(0); // Set back to player's turn
     }
   }
 
@@ -177,9 +207,9 @@ void loop()
         matrix.drawPixel(enemyX, enemyY, matrix.Color333(2, 1, 0));
       }
 
-      if(getFlag(x, y) == 'a')
+      if(getFlag(x, y) == 'a') // 'a' flag -> valid ship (healthy)
         matrix.drawPixel(x, y, matrix.Color333(0, 1, 0));
-      if(getFlag(x, y) == 'm')
+      if(getFlag(x, y) == 'm') // 'm' flag -> missed shot
         matrix.drawPixel(x, y, matrix.Color333(2, 1, 0));
     }
   }
