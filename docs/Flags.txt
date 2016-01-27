@@ -1,0 +1,3 @@
+'a' = Valid ship placement unhit
+'h' = Hit ship
+'m' = Missed shot
